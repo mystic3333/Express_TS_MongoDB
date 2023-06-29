@@ -1,0 +1,379 @@
+参考地址： https://blog.logrocket.com/how-to-set-up-node-typescript-express/
+
+Advisory boards aren’t only for executives. Join the LogRocket Content Advisory Board today →
+LogRocket Blog
+BLOG
+FEATURES
+SOLUTIONS
+SIGN IN
+START MONITORING FOR FREE
+
+Aman Mittal 
+👨‍💻 Developer 👉 Node.js, React, React Native | Tech Blogger with 1M+ views on Medium
+How to set up TypeScript with Node.js and Express
+March 10, 2022  5 min read 
+
+Node TypeScript Express
+Editor’s note: This article was last updated on 23 March 2022 to update code that had become deprecated.
+
+Ease of development is great when you’re building a server written in JavaScript and using Node.js and Express. But what happens when your application server scales, or you’re working on a team of developers all across the world? In these instances, TypeScript can help.
+
+In this article, we’ll cover a beginner-friendly way to set up TypeScript in an Express app, understanding the basic constraints that come with it.
+
+To take full advantage of this tutorial, be sure you have the following:
+
+Node.js ≥v12.x installed in your local development environment
+Access to a package manager like npm or Yarn
+Basic knowledge of Node.js and Express
+Table of contents
+Create a package.json file
+Create a minimal server with Express
+Installing TypeScript
+Generating tsconfig.json
+Create an Express server with a .ts extension
+Watching file changes and build directory
+Create a package.json file
+Start by creating a new directory wherever you keep your side projects in your local development environment. Inside that directory, use npm’s initializer command to create a package.json file:
+
+mkdir node-express-typescript
+cd node-express-typescript/
+npm init --yes
+When you initialize a package.json file, the --yes flag uses the default settings you have set up from npm config. The newly created package.json file might look something like the following code:
+
+{
+  "name": "express-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+Create a minimal server with Express
+After initializing the package.json file, let’s add an Express package. From the terminal window, run the command below:
+
+npm install express dotenv
+Next, to trigger a minimal server, create a new file called index.js at the root of the project with the following code:
+
+const express = require('express');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT;
+
+app.get('/', (req, res) => {
+  res.send('Express + TypeScript Server');
+});
+
+app.listen(port, () => {
+  console.log(`[server]: Server is running at http://localhost:${port}`);
+});
+The dotenv package is used to read environment variables from the .env file. Create it in the root of your Node.js app, then create the environment variable for PORT=8000.
+
+To start the server, go back to the terminal and trigger the command node index.js:
+
+Start Server Node Index
+The Express server is now up and running!
+
+Installing TypeScript
+We’ll start by installing TypeScript as a dev dependency. Along with it, we’ll install the the @types declaration packages for Express and Node.js, which provide type definitions in the form of declaration files.
+
+Declaration files are predefined modules that describe the shape of JavaScript values, or the types present, for the TypeScript compiler. Type declarations are usually contained in files with a .d.ts extension. These declaration files are available for all libraries that were originally written in JavaScript, not TypeScript.
+
+The DefinitelyTyped GitHub repository maintains the TypeScript type definitions for use directly in Node.js and other JavaScript projects, so you don’t have to define these types from scratch. To add these types or the declaration files related to a particular library or a module, you have to look for the packages that start with the @types namespace.
+
+Open the terminal window and install the packages described above with the following command:
+
+npm i -D typescript @types/express @types/node
+The -D flag, also known as the --dev flag, is a specification for the package manager to install these libraries as devDependencies.
+
+Once these libraries are installed, go to the package.json file where you’ll see a new devDependencies object:
+
+{
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.10",
+    "typescript": "^4.5.5"
+  }
+}
+Generating tsconfig.json
+Now, we have a TypeScript project compiled with some default configuration options. The tsconfig.json file provides these default options and also provides us with the ability to tweak or customize the compiler options.
+
+Typically, the tsconfig.json file lives at the root of the project. To generate it, we’ll use the tsc command:
+
+npx tsc --init
+The command above will generate a new file called tsconfig.json with the following default compiler options:
+
+target: es2016
+module: commonjs
+strict: true
+esModuleInterop: true
+skipLibCheck: true
+forceConsistentCasingInFileNames: true
+If you open the tsconfig.json file, you’ll see a lot of other compiler options that are commented out. In tsconfig.json, compilerOptions is a mandatory field that needs to be specified. The options used in the config above are:
+
+target: Allows us to specify the target JavaScript version that the compiler will output
+module: Allows us to use a module manager in the compiled JavaScript code. CommonJS is supported and is a standard in Node.js
+strict: An option that enables strict type-checking options
+esModuleInterop: Allows us to compile ES6 modules to CommonJS modules
+skipLibCheck: If set to true, skips type-checking of default library declaration files
+forceConsistentCasingInFileNames: When set to true, enables case sensitive file naming
+One option that you will have to enable is called outDir, which specifies where the output will be located after the compilation step. You can search for this option in the tsconfig.json file and uncomment it.
+
+By default, the value of this option is set to the root directory. Change it to dist:
+
+{
+  "compilerOptions": {
+    "outDir": "./dist"
+
+    // rest options remain same
+  }
+}
+While there are probably other configuration options that you can add on to the TypeScript compiler, the options listed above are basic specifications that can help you get started.
+
+Create an Express server with a .ts extension
+Now, you can easily convert the minimal server code in index.js to an index.ts file.
+
+
+Over 200k developers use LogRocket to create better digital experiences
+Learn more →
+First, rename the file to index.ts. The .ts extension is a file extension that determines what TypeScript files are compiled to JavaScript files later when we build the server.
+
+Open the index.ts file and modify it, as shown below:
+
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app: Express = express();
+const port = process.env.PORT;
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Express + TypeScript Server');
+});
+
+app.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+});
+Watching file changes and build directory
+Another development-related utility library I like to use when working on Node.js projects is nodemon. nodemon is a tool that helps develop Node.js based applications by automatically restarting the Node.js application when file changes in the directory are detected.
+
+We’ll also install another dev dependency called Concurrently, which will allow us to run multiple commands like nodemon to watch file changes and the tsc command to compile the code:
+
+npm install -D concurrently nodemon
+After installing these dev dependencies, update the scripts in the package.json file:
+
+{
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+  }
+}
+The build command will compile the code in JavaScript inside a dist directory. The dev command is used to run the Node.js server in development mode.
+
+Now, go back to the terminal window and run npm run dev to trigger the development server:
+
+Trigger Dev Server
+There are no errors, indicating that the server is successfully running. You can go to the browser window to see the result.
+
+Since nodemon detected changes, let’s try to edit the message sent from res.send() and simultaneously take a look at the terminal to see if nodemon detects any file changes or not:
+
+Node Dev Server TS
+To compile the code, you need to run the command npm run build. There is a new dist directory created after this command executes successfully. Inside this directory, the TypeScript code is compiled to valid JavaScript:
+
+'use strict';
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
+Object.defineProperty(exports, '__esModule', { value: true });
+const express_1 = __importDefault(require('express'));
+const dotenv_1 = __importDefault(require('dotenv'));
+dotenv_1.default.config();
+const app = (0, express_1.default)();
+const port = process.env.PORT;
+app.get('/', (req, res) => {
+  res.send('Express + TypeScript Server is running.');
+});
+app.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+});
+If you specify any other directory as the value of the property outDir in the tsconfig.json file, that directory would be reflected here instead of dist.
+
+Conclusion
+Using TypeScript has its benefits, but it does come with a bit of a learning curve. You have to carefully analyze whether using TypeScript in your Node.js and Express backend projects is beneficial or not, which may depend on the requirements of your project.
+
+Make sure to check out the different Typed Definitions or go to the official TypeScript documentation to explore more. I hope you enjoyed this project! Be sure to leave a comment if you have any questions. Happy coding!
+
+LogRocket: Full visibility into your web and mobile apps
+LogRocket Dashboard Free Trial Banner
+LogRocket is a frontend application monitoring solution that lets you replay problems as if they happened in your own browser. Instead of guessing why errors happen, or asking users for screenshots and log dumps, LogRocket lets you replay the session to quickly understand what went wrong. It works perfectly with any app, regardless of framework, and has plugins to log additional context from Redux, Vuex, and @ngrx/store.
+
+In addition to logging Redux actions and state, LogRocket records console logs, JavaScript errors, stacktraces, network requests/responses with headers + bodies, browser metadata, and custom logs. It also instruments the DOM to record the HTML and CSS on the page, recreating pixel-perfect videos of even the most complex single-page and mobile apps.
+
+Try it for free.
+Share this:
+TwitterRedditLinkedInFacebook
+#node #typescript
+« How to copy objects in JavaScript: A complete guide
+Working with Supabase Studio »
+
+
+Stop guessing about your digital experience with LogRocket
+Get started for free
+3 ways to implement a typing animation in React
+Rishi Purwar
+Jun 28, 2023  7 min read
+Building a Rust app with Perseus
+Eze Sunday
+Jun 28, 2023  12 min read
+Understanding flatMap() and other TypeScript arrays
+Muhammed Ali
+Jun 28, 2023  7 min read
+30 Replies to “How to set up TypeScript with Node.js and Express”
+ Jay Wolfe Says:
+July 19, 2020 at 3:05 pm
+What is your terminal theme? The package and nodejs icon are really cool additions
+
+ Aman Says:
+July 20, 2020 at 8:20 am
+Hey Jay, the theme is called Snazzy.
+
+ Fred Says:
+October 21, 2020 at 3:18 pm
+why compile?
+
+ Kartikey Says:
+February 5, 2023 at 10:06 am
+So that the typescript files are converted to js as node cannot execute ts files
+
+ Jo Says:
+January 6, 2021 at 7:06 am
+short and sweet
+
+ Sérgio Antonio Macedo Júnior Says:
+January 23, 2021 at 5:44 pm
+You saved my life 😁
+
+ Gunnar0822 Says:
+March 23, 2021 at 3:56 pm
+What about that ‘media’ command early on in the article ?
+
+It says :
+
+media server
+cd server/
+
+ Aman Mittal Says:
+March 23, 2021 at 4:58 pm
+Hey Gunnar,
+
+Thanks for catching up that. It should mkdir — to create the server directory.
+
+ Dave Feldman Says:
+April 1, 2021 at 10:03 am
+What’s the best command setup for deploying and running something like this in production? There are now compiled JS files in build/, but other files (e.g., package.json, static HTML, etc.) are all in their original locations. And, we haven’t created a script in package.json to run the built app.
+
+ Habibul Umam Says:
+April 24, 2021 at 9:48 am
+okayy,, then how can i use other plugin to work with my express typescript. am i should install plugin that support in typescript or not ?
+
+ Todd Berger Says:
+May 27, 2021 at 9:31 pm
+You would need something like WebPack to handle the build requirements.
+
+ Todd Berger Says:
+May 27, 2021 at 9:34 pm
+Choose any middleware you need, but make sure DefinitelyTyped has the corresponding Typescript @types/* mappings available. Most popular NodeJS middleware packages are supported in the DefinitelyTyped project.
+
+ Julien Says:
+September 10, 2021 at 3:59 am
+great article
+
+ Loomax Says:
+December 30, 2021 at 1:43 pm
+I had to run npm install ts-node -g to install ts-node globally so that nodemon found it
+
+ Xintong Says:
+June 7, 2023 at 2:47 pm
+Same here
+
+ Batakkeren Says:
+April 6, 2022 at 5:35 am
+Fix `https` to `http` in console.log() statement:
+“””
+console.log(`[server]: Server is running at https://localhost:${port}`);
+“””
+
+ Aman Mittal Says:
+May 17, 2022 at 11:45 am
+Hey, if you are running localhost, you do not require “https” until you want to intentionally use HTTPS.
+
+ Melanke Says:
+May 13, 2022 at 10:55 am
+You have a typo: `dotnev`
+
+ Aman Mittal Says:
+May 17, 2022 at 11:47 am
+Can you point me towards which typo?
+
+ Melanke Says:
+May 13, 2022 at 11:12 am
+“outDir” should be “./dist”
+
+ Aman Mittal Says:
+May 17, 2022 at 11:46 am
+In the article above, the “outDir” is referring to the config option. The “./dist” is the value.
+
+Are you referring to something specific? Can you please point me to that?
+
+ Kelvin Says:
+May 24, 2022 at 10:21 pm
+instead of ‘/dist’, should be ‘./dist’ — otherwise it goes to machine root
+
+ Aman Mittal Says:
+May 25, 2022 at 9:12 am
+Understood. Thanks for catching that Kelvin!
+
+ Consatan Says:
+June 15, 2022 at 12:12 am
+when rename `index.js` to `index.ts`, `package.json` `mian` field must change to `index.ts` too.
+
+ Ross Says:
+January 21, 2023 at 7:30 pm
+You just saved me. Thank you!
+
+ Steve Skladany Says:
+June 20, 2022 at 9:27 am
+Excellent tutorial! One minor note is that the protocol should not be `https` since express is not secure by default, e.g, this line should be changed to just `http` — `console.log(`⚡️[server]: Server is running at http://localhost:${port}`)`
+
+ Praditya Adhitama Says:
+December 27, 2022 at 1:59 pm
+This is a minor but crucial fix. Thanks for pointing it out!
+
+ Dey Says:
+November 1, 2022 at 3:45 am
+had to remove “module”: “commonjs” from tsconfig.js as the error “ReferenceError: exports is not defined in ES module scope”
+
+ Jota Says:
+December 19, 2022 at 10:34 am
+I had to remove `”type”: “module”,` from the `package.json` file to fix the issue you mention @Dey
+
+ Bosito Vallesteros Says:
+April 29, 2023 at 9:58 pm
+thanks bro
+
+Leave a Reply
+
+Does something seem off? Email support@logrocket.com
+Search...
+ 
